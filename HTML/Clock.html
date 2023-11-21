@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern HTML Clock and Timer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #282c34;
+            color: #61dafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .display {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #clock, #timer {
+            font-size: 3em;
+            transition: color 0.3s;
+        }
+
+        #clock-label, #timer-label {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        #controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #61dafb;
+            color: #282c34;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #4fa3d1;
+        }
+    </style>
+</head>
+<body>
+    <div class="display">
+        <div>
+            <div id="clock"></div>
+            <div id="clock-label">Clock</div>
+        </div>
+        <div>
+            <div id="timer"></div>
+            <div id="timer-label">Timer</div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="pauseTimer()">Pause</button>
+        <button onclick="resetTimer()">Reset</button>
+    </div>
+
+    <script>
+        var clockInterval;
+        var timerInterval;
+        var seconds = 0;
+        var minutes = 0;
+        var hours = 0;
+        var isTimerRunning = false;
+
+        function updateClock() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            var seconds = now.getSeconds();
+
+            // Add leading zeros to single-digit minutes and seconds
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            var timeString = hours + ":" + minutes + ":" + seconds;
+            document.getElementById("clock").innerHTML = timeString;
+        }
+
+        function updateTimer() {
+            var timeString = formatTime(hours) + ":" + formatTime(minutes) + ":" + formatTime(seconds);
+            document.getElementById("timer").innerHTML = timeString;
+        }
+
+        function formatTime(time) {
+            return (time < 10) ? "0" + time : time;
+        }
+
+        function startTimer() {
+            if (!isTimerRunning) {
+                timerInterval = setInterval(function () {
+                    seconds++;
+                    if (seconds === 60) {
+                        seconds = 0;
+                        minutes++;
+                    }
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                    updateTimer();
+                }, 1000);
+                isTimerRunning = true;
+                document.getElementById("timer").style.color = "#e44d26"; // Change color when running
+            }
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            document.getElementById("timer").style.color = "#61dafb"; // Reset color when paused
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            minutes = 0;
+            hours = 0;
+            updateTimer();
+            isTimerRunning = false;
+            document.getElementById("timer").style.color = "#61dafb"; // Reset color
+        }
+
+        // Start the clock
+        clockInterval = setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

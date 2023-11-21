@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebP to PNG Converter</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        input {
+            display: none;
+        }
+
+        label {
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        label:hover {
+            background-color: #2980b9;
+        }
+
+        button {
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        #output {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebP to PNG Converter</h1>
+        <label for="fileInput">Choose a WebP file</label>
+        <input type="file" id="fileInput" accept=".webp">
+        <button onclick="convert()">Convert</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function convert() {
+            const fileInput = document.getElementById('fileInput');
+            const outputDiv = document.getElementById('output');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.src = e.target.result;
+
+                    img.onload = function () {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+
+                        const pngDataUrl = canvas.toDataURL('image/png');
+                        const downloadButton = document.createElement('button');
+                        downloadButton.textContent = 'Download Converted Image';
+                        downloadButton.addEventListener('click', function () {
+                            const a = document.createElement('a');
+                            a.href = pngDataUrl;
+                            a.download = 'converted.png';
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        });
+
+                        outputDiv.innerHTML = ''; // Clear previous output
+                        outputDiv.appendChild(downloadButton);
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a WebP file for conversion.');
+            }
+        }
+    </script>
+</body>
+</html>
